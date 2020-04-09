@@ -63,7 +63,6 @@ Function Set-ComputerRenameInfo
     {
         "***************`n[Set-ComputerRenameInfo] Could not send HW Inventory. Error: $($_.Exception.Message)`n***************"
     }
-
 }
 
 # Script Main #############################
