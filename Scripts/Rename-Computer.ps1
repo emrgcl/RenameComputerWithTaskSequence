@@ -22,6 +22,49 @@ Function Get-CIMDateTime
     }
 }
 
+Function Set-ComputerRenameInfo
+{
+    [CmdletBinding()]
+    Param(
+        [string]$OldComputerName,
+        [string]$NewComputerName,
+        [string]$RenameStatus,
+        [string]$RenameDate
+    )
+
+    $FilteredProperties = $MyInvocation.BoundParameters.GetEnumerator() | Where-Object{$_.Key -ne "ErrorAction"}
+
+    $Properties = @{}
+    $FilteredProperties | Foreach { $Properties.Add($_.Key,$_.Value) }
+
+    #$Properties = @{
+    #                OldComputerName = $OldComputerName
+    #                NewComputerName = $NewComputerName
+    #                RenameStatus = $RenameStatus
+    #                RenameDate = $RenameDate
+    #                }
+
+    Try 
+    {
+        # Set information in new class
+        Get-WMIObject -Namespace root\cimv2 -Class 'CM_ComputerRenameInfo' | Set-WmiInstance -Arguments $Properties | Out-Null
+        Write-Output "***************`n[Set-ComputerRenameInfo] Successfully added values to ComputerRenameInfo object`n***************"
+    } 
+    Catch 
+    {
+        "***************`n[Set-ComputerRenameInfo] Could not set Set-ComputerRenameInfo Instance. Error: $($_.Exception.Message)`n***************"
+    }
+
+    Try 
+    {
+        "***************`n[Set-ComputerRenameInfo] Successfully sent HWInventory Info`n***************"
+    } 
+    Catch 
+    {
+        "***************`n[Set-ComputerRenameInfo] Could not send HW Inventory. Error: $($_.Exception.Message)`n***************"
+    }
+}
+
 # Script Main #############################
 Try 
 {
@@ -32,17 +75,17 @@ Try
         Try 
         {
             $Object = Get-WmiObject -Class win32_computersystem -ErrorAction Stop
-            #$RenameResult = $Object.Rename($NewComputerName)
+            $RenameResult = $Object.Rename($NewComputerName)
 
             If ($RenameResult.ReturnValue -eq 0) 
             {
                 Write-Output "***************`n[Rename-LocalComputer] Successfully renamed computer name to $NewComputerName`n***************"
-                Set-ComputerRenameInfo -NewComputerName $NewComputerName -RenameStatus 'OK' -RenameDate Get-CIMDateTime -ErrorAction stop
+                Set-ComputerRenameInfo -NewComputerName $NewComputerName -RenameStatus 'OK' -RenameDate $(Get-CIMDateTime) -ErrorAction stop
             } 
             Else 
             {
                 Write-Output "***************`n[Rename-LocalComputer] Could not rename to $NewComputerName. Error occured during rename operation. Errorcode: $($RenameResult.ReturnValue)`n***************"
-                Set-ComputerRenameInfo -NewComputerName $NewComputerName -RenameStatus 'Failed' -RenameDate Get-CIMDateTime -ErrorAction Stop
+                Set-ComputerRenameInfo -NewComputerName $NewComputerName -RenameStatus 'Failed' -RenameDate $(Get-CIMDateTime) -ErrorAction Stop
             }
         } 
         Catch 

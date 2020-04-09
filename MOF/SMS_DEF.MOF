@@ -1,0 +1,15 @@
+[ SMS_Report (FALSE),
+  SMS_Group_Name ("CM_ComputerRenameInfo"),
+  SMS_Class_ID ("MICROSOFT|CM_ComputerRenameInfo|1.0"),
+  Namespace ("root\\\\cimv2") ]
+class CM_ComputerRenameInfo : SMS_Class_Template
+{
+    [ SMS_Report (FALSE), key ]
+    String     NewComputerName;
+    [ SMS_Report (FALSE) ]
+    String     OldComputerName;
+    [ SMS_Report (FALSE) ]
+    String     RenameStatus;
+    [ SMS_Report (FALSE) ]
+    Datetime     RenameDate;
+};
