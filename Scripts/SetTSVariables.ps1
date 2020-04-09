@@ -1,6 +1,6 @@
 ﻿Param(
-    [string]$SiteCode = "TER",                         # Site code 
-    [string]$ProviderMachineName = "TCM01.terzi.local" # SMS Provider machine name
+    [Parameter(Position=0,mandatory=$true)][string]$SiteCode,                         # Site code 
+    [Parameter(Position=1,mandatory=$true)][string]$ProviderMachineName # SMS Provider machine name
 
 )
 # Main ###############################
